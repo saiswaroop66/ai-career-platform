@@ -11,10 +11,20 @@ st.set_page_config(
 )
 
 # ---------------------------------
-# CUSTOM CSS (PREMIUM UI)
+# SIDEBAR
+# ---------------------------------
+st.sidebar.title("🚀 AI Career Platform")
+
+st.sidebar.info(
+    "Upload your resume PDF and get AI-powered career recommendations."
+)
+
+# ---------------------------------
+# CUSTOM CSS
 # ---------------------------------
 st.markdown("""
 <style>
+
 .main {
     background-color: #0E1117;
     color: white;
@@ -44,15 +54,21 @@ st.markdown("""
     font-weight: bold;
     margin-top: 20px;
 }
+
 </style>
 """, unsafe_allow_html=True)
 
 # ---------------------------------
 # TITLE
 # ---------------------------------
-st.markdown("<h1 style='text-align:center;'>🚀 AI Career Recommendation Platform</h1>", unsafe_allow_html=True)
+st.markdown(
+    "<h1 style='text-align:center;'>🚀 AI Career Recommendation Platform</h1>",
+    unsafe_allow_html=True
+)
 
-st.write("### Upload your resume and discover the best career roles for your skills.")
+st.write(
+    "### Upload your resume and discover the best career opportunities."
+)
 
 # ---------------------------------
 # FILE UPLOAD
@@ -85,13 +101,19 @@ skills_db = [
     "c++",
     "c",
     "mongodb",
-    "mysql"
+    "mysql",
+    "numpy",
+    "pandas",
+    "tensorflow",
+    "opencv",
+    "git"
 ]
 
 # ---------------------------------
 # JOB ROLE DATABASE
 # ---------------------------------
 job_roles = {
+
     "Data Scientist": [
         "python",
         "machine learning",
@@ -136,30 +158,55 @@ job_roles = {
 # JOB IMAGES
 # ---------------------------------
 job_images = {
-    "Data Scientist": "data.jpeg",
-    "AI Engineer": "ai.jpeg",
-    "Data Analyst": "analys.jpeg",
-    "Software Developer": "software.jpeg",
-    "Web Developer": "web.jpeg",
-    "Backend Developer": "back.jpeg"
+
+    "Data Scientist":
+        "images/data_scientist.jpg",
+
+    "AI Engineer":
+        "images/ai_engineer.jpg",
+
+    "Data Analyst":
+        "images/data_analyst.jpg",
+
+    "Software Developer":
+        "images/software_developer.jpg",
+
+    "Web Developer":
+        "images/web_developer.jpg",
+
+    "Backend Developer":
+        "images/backend_developer.jpg"
 }
 
 # ---------------------------------
 # SALARY DATABASE
 # ---------------------------------
 salary_db = {
-    "Data Scientist": "₹10 - ₹20 LPA",
-    "AI Engineer": "₹12 - ₹25 LPA",
-    "Data Analyst": "₹6 - ₹12 LPA",
-    "Software Developer": "₹5 - ₹15 LPA",
-    "Web Developer": "₹4 - ₹10 LPA",
-    "Backend Developer": "₹6 - ₹14 LPA"
+
+    "Data Scientist":
+        "₹10 - ₹20 LPA",
+
+    "AI Engineer":
+        "₹12 - ₹25 LPA",
+
+    "Data Analyst":
+        "₹6 - ₹12 LPA",
+
+    "Software Developer":
+        "₹5 - ₹15 LPA",
+
+    "Web Developer":
+        "₹4 - ₹10 LPA",
+
+    "Backend Developer":
+        "₹6 - ₹14 LPA"
 }
 
 # ---------------------------------
 # ROLE DESCRIPTIONS
 # ---------------------------------
 role_description = {
+
     "Data Scientist":
         "Works on AI, ML, analytics and prediction systems.",
 
@@ -173,7 +220,7 @@ role_description = {
         "Builds software applications and backend systems.",
 
     "Web Developer":
-        "Develops websites and responsive web applications.",
+        "Develops responsive websites and web applications.",
 
     "Backend Developer":
         "Handles server-side logic, APIs and databases."
@@ -197,7 +244,6 @@ def extract_text_from_pdf(file):
 
     return text
 
-
 # ---------------------------------
 # SKILL EXTRACTION
 # ---------------------------------
@@ -213,7 +259,6 @@ def extract_skills(text):
             found_skills.append(skill)
 
     return found_skills
-
 
 # ---------------------------------
 # JOB RECOMMENDATION ENGINE
@@ -244,7 +289,7 @@ def recommend_jobs(user_skills):
             "Missing Skills": ", ".join(missing)
         })
 
-    # Sort by score
+    # SORT BY SCORE
     all_results = sorted(
         all_results,
         key=lambda x: x["Score"],
@@ -253,44 +298,84 @@ def recommend_jobs(user_skills):
 
     return all_results
 
-
 # ---------------------------------
 # MAIN EXECUTION
 # ---------------------------------
 if uploaded_file:
 
-    # Extract text
+    # EXTRACT TEXT
     resume_text = extract_text_from_pdf(uploaded_file)
 
-    # Show Resume Content
-    st.markdown("<div class='section-title'>📄 Resume Content</div>", unsafe_allow_html=True)
+    # ---------------------------------
+    # PDF VALIDATION
+    # ---------------------------------
+    if len(resume_text.strip()) < 50:
+
+        st.error(
+            "⚠️ Could not read resume text properly.\n\n"
+            "Please upload a text-based PDF resume."
+        )
+
+        st.stop()
+
+    # ---------------------------------
+    # SHOW RESUME TEXT
+    # ---------------------------------
+    st.markdown(
+        "<div class='section-title'>📄 Resume Content</div>",
+        unsafe_allow_html=True
+    )
 
     with st.expander("View Resume Text"):
+
         st.write(resume_text)
 
-    # Extract Skills
+    # ---------------------------------
+    # EXTRACT SKILLS
+    # ---------------------------------
     skills = extract_skills(resume_text)
 
-    st.markdown("<div class='section-title'>🧠 Extracted Skills</div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div class='section-title'>🧠 Extracted Skills</div>",
+        unsafe_allow_html=True
+    )
 
     if skills:
         st.success(", ".join(skills))
+
     else:
         st.warning("No skills detected")
 
-    # Job Recommendation
+    # ---------------------------------
+    # RECOMMEND JOBS
+    # ---------------------------------
     results = recommend_jobs(skills)
 
-    # Top Recommended Job
     top_role = results[0]["Role"]
     top_score = results[0]["Score"]
     top_missing = results[0]["Missing Skills"]
 
-    st.markdown("<div class='section-title'>💼 Best Career Match</div>", unsafe_allow_html=True)
+    # ---------------------------------
+    # NO MATCH HANDLING
+    # ---------------------------------
+    if top_score < 20:
+
+        st.warning(
+            "⚠️ Resume skills do not strongly match available career roles."
+        )
+
+    # ---------------------------------
+    # BEST CAREER MATCH
+    # ---------------------------------
+    st.markdown(
+        "<div class='section-title'>💼 Best Career Match</div>",
+        unsafe_allow_html=True
+    )
 
     col1, col2 = st.columns([1, 2])
 
     with col1:
+
         st.image(job_images[top_role], width=300)
 
     with col2:
@@ -314,9 +399,12 @@ if uploaded_file:
         st.error(f"⚠️ Missing Skills: {top_missing}")
 
     # ---------------------------------
-    # TOP 3 RECOMMENDATIONS
+    # TOP 3 CAREER RECOMMENDATIONS
     # ---------------------------------
-    st.markdown("<div class='section-title'>🏆 Top Career Recommendations</div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div class='section-title'>🏆 Top Career Recommendations</div>",
+        unsafe_allow_html=True
+    )
 
     top3 = results[:3]
 
@@ -327,7 +415,11 @@ if uploaded_file:
         c1, c2 = st.columns([1, 3])
 
         with c1:
-            st.image(job_images[result["Role"]], width=180)
+
+            st.image(
+                job_images[result["Role"]],
+                width=180
+            )
 
         with c2:
 
@@ -338,24 +430,54 @@ if uploaded_file:
 
             st.progress(result["Score"] / 100)
 
-            st.write(f"### 📊 Match Score: {result['Score']}%")
+            st.write(
+                f"### 📊 Match Score: {result['Score']}%"
+            )
 
-            st.write(f"### 💰 Salary: {salary_db[result['Role']]}")
+            st.write(
+                f"### 💰 Salary: {salary_db[result['Role']]}"
+            )
 
-            st.info(role_description[result["Role"]])
+            st.info(
+                role_description[result["Role"]]
+            )
 
-            st.warning(f"Missing Skills: {result['Missing Skills']}")
+            st.warning(
+                f"Missing Skills: {result['Missing Skills']}"
+            )
 
         st.markdown("</div>", unsafe_allow_html=True)
 
     # ---------------------------------
+    # BAR CHART
+    # ---------------------------------
+    st.markdown(
+        "<div class='section-title'>📊 Career Match Comparison</div>",
+        unsafe_allow_html=True
+    )
+
+    chart_data = {
+        result["Role"]: result["Score"]
+        for result in top3
+    }
+
+    st.bar_chart(chart_data)
+
+    # ---------------------------------
     # TABLE VIEW
     # ---------------------------------
-    st.markdown("<div class='section-title'>📋 All Career Matches</div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div class='section-title'>📋 All Career Matches</div>",
+        unsafe_allow_html=True
+    )
 
     df = pd.DataFrame(results)
 
     st.dataframe(df, use_container_width=True)
 
-else:
-    st.info("📄 Upload a resume PDF to begin.")
+# ---------------------------------
+# FOOTER
+# ---------------------------------
+st.markdown("---")
+
+st.write("Built with ❤️ using Python & Streamlit")

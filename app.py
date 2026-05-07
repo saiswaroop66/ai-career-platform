@@ -160,22 +160,22 @@ job_roles = {
 job_images = {
 
     "Data Scientist":
-        "images/data_scientist.jpg",
+        "data.jpeg",
 
     "AI Engineer":
-        "images/ai_engineer.jpg",
+        "ai.jpeg",
 
     "Data Analyst":
-        "images/data_analyst.jpg",
+        "analys.jpeg",
 
     "Software Developer":
-        "images/software_developer.jpg",
+        "software.jpeg",
 
     "Web Developer":
-        "images/web_developer.jpg",
+        "web.jpeg",
 
     "Backend Developer":
-        "images/backend_developer.jpg"
+        "back.jpeg"
 }
 
 # ---------------------------------
